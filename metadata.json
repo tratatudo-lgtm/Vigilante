@@ -1,0 +1,8 @@
+{
+  "name": "Vigilante AI - Smart Community Reporting",
+  "description": "A modern, AI-powered citizen reporting platform for documenting local issues, mapping infractions, and improving community safety with intelligent categorization.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ]
+}

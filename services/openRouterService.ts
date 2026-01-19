@@ -1,4 +1,3 @@
-
 const OPENROUTER_API_KEY = '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';
 
 export const generateLegalDefense = async (incidentData: any, lang: string) => {
@@ -6,12 +5,12 @@ export const generateLegalDefense = async (incidentData: any, lang: string) => {
   Dados da infração:
   - Categoria: ${incidentData.category}
   - Gravidade: ${incidentData.severity}
-  - Descrição do incidente: ${incidentData.description}
-  - Sumário: ${incidentData.aiSummary}
+  - Descrição: ${incidentData.description}
+  - Contexto Adicional: ${incidentData.extraContext || 'Nenhum'}
   
-  O texto deve ser jurídico, formal, estruturado com factos e fundamentos legais. 
-  Assine o documento como: "Equipa Vigilantes da Estrada Norte". 
-  Não mencione que esta resposta foi gerada por inteligência artificial.`;
+  O texto deve ser jurídico, formal, estruturado com fundamentos legais. 
+  Assine como: "Equipa Vigilantes da Estrada Norte".
+  Não mencione IA nem OpenRouter.`;
 
   const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
@@ -22,14 +21,14 @@ export const generateLegalDefense = async (incidentData: any, lang: string) => {
     body: JSON.stringify({
       "model": "arcee/trinity",
       "messages": [
-        { "role": "system", "content": "Você é um assistente jurídico especializado em direito rodoviário e contraordenações de trânsito." },
+        { "role": "system", "content": "Você é um assistente jurídico especializado em trânsito." },
         { "role": "user", "content": prompt }
       ]
     })
   });
 
   const data = await response.json();
-  return data.choices[0].message.content;
+  return data.choices?.[0]?.message?.content || "Erro ao gerar defesa.";
 };
 
 export const askVigilanteAssistant = async (question: string, lang: string) => {
@@ -44,9 +43,7 @@ export const askVigilanteAssistant = async (question: string, lang: string) => {
       "messages": [
         { 
           "role": "system", 
-          "content": `Você é o "Vigilante", um assistente virtual especializado em trânsito, multas e no funcionamento da aplicação Vigilante AI. 
-          Comunique de forma clara, próxima e útil em ${lang === 'pt' ? 'Português' : 'Inglês'}. 
-          Nunca diga que é uma inteligência artificial ou que usa OpenRouter.` 
+          "content": `Você é o "Vigilante", um assistente de trânsito útil. Fale em ${lang}. Nunca diga que é uma IA.` 
         },
         { "role": "user", "content": question }
       ]
@@ -54,5 +51,5 @@ export const askVigilanteAssistant = async (question: string, lang: string) => {
   });
 
   const data = await response.json();
-  return data.choices[0].message.content;
+  return data.choices?.[0]?.message?.content || "O Vigilante não conseguiu responder agora.";
 };
